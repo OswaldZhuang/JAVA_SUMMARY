@@ -1,0 +1,53 @@
+package base.type;
+
+/*
+ * ASCII 采用8 bit, 实际只用了7 bit
+ * Java采用Unicode编码字符集,即(Basic Multilingual Plane(BMP,基本多语言面)内的)字符采用16 bit(2 字节 , 即一个char)编码
+ * 在此之外的采用更多的bit表示
+ * UTF-8和UTF-16为字符集编码,即对字符集的编码方式,使之能够存储在计算机中
+ * UTF-8是Unicode最为普遍的实现方式,它是变长的
+ * UTF-16是定长的,固定16位
+ * UTF(Unicode Transformation Formats)
+ * BOM:byte order mark, 用于表明UTF-8编码方式, 其为: EF BB BF, 一般并不建议在字节流开头加入BOM
+ * CodePoint:指的是一个Unicode中为字符分配的编号,以U+开头
+ * CodeUnit:编码方法中对一个字符编码过后所占的最小存储单元
+ */
+
+/*Unicode和UTF-8的对应关系:
+    U+ 0000 ~ U+ 007F: 0XXXXXXX
+    U+ 0080 ~ U+ 07FF: 110XXXXX 10XXXXXX
+    U+ 0800 ~ U+ FFFF: 1110XXXX 10XXXXXX 10XXXXXX
+    U+10000 ~ U+1FFFF: 11110XXX 10XXXXXX 10XXXXXX 10XXXXXX
+    */
+
+
+/*
+ * String对象的底层是由final char[]实现的
+ * String是不可变的
+ * 由于char只占2个字节,因此对于一些生僻的汉字来说,是不能用char表示的
+ * 比如,char c = '𠃾', 编译器就会报错
+ * 此时只能使用String来表示,又因为String维护的是一个char[]
+ * 所以生僻的汉字通常是由2个char来表示(实际上底层是用一个int来实现的)
+ * 这就是所谓的Unicode surrogate pair(USP),其分为高低两位
+ * String类型是以UTF-16来编码的
+ */
+public class UseString {
+    
+    static String str1 = "zxd";
+    
+    /*
+     * 该构造函数其实是不必要的
+     * 因为“zxd”对象的value(实际上就是char[])
+     * 会赋给str2的value,即str2和str1的value
+     * 指向同一个对象
+     * (注意:str1和str2仍然是两个不同的对象)
+     */
+    static String str2 = new String("zxd");
+    
+    public static void main(String[] args) {
+        String str3 = "𠃾";
+        System.out.println(str3.getBytes().length);
+        //System.out.println(str1 == str2);
+    }
+
+}
