@@ -33,6 +33,10 @@ package base.type;
  */
 public class UseString {
     
+    /*
+     * 该方法申明的string会保存在方法区中的
+     * 常量池里
+     */
     static String str1 = "zxd";
     
     /*
@@ -42,7 +46,33 @@ public class UseString {
      * 指向同一个对象
      * (注意:str1和str2仍然是两个不同的对象)
      */
+    /*
+     * 该方法声明的string保存在堆中
+     */
     static String str2 = new String("zxd");
+    
+    /*
+     * 编译期间,JVM会对字符串进行优化
+     * 比如:
+     * String str = "as" + "df";
+     * 优化后的结果直接为str = "asdf"
+     * 但是对于引用类型,JVM在编译期间无法确定其类型,故不会优化
+     * 比如:
+     * String a = "as";
+     * String b = "df";
+     * String c = a + b;
+     */
+    
+    public void aboutStringIntern() {
+        /*
+         * 关于String的本地函数intern()
+         * public native String inter()
+         * 当该方法被调用的时候,如果字符串常量池中存在该
+         * String对象(equals方法返回true),
+         * 那么直接返回常量池中的对象,否则就将其加入到
+         * 常量池
+         */
+    }
     
     public static void main(String[] args) {
         String str3 = "𠃾";

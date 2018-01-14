@@ -1,5 +1,5 @@
 package base.system;
 
-public class UseSystem {
 
+public class UseSystem {
 }
