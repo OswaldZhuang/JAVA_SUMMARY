@@ -3,6 +3,9 @@ package concurrence.chapter3_sharedobj;
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * 不变性
+ */
 public class Immutability {
     /*
      * 使用关键字final
@@ -21,8 +24,4 @@ public class Immutability {
         return set.contains(name);
     }
     
-    /*
-     * 使用volatile
-     * 
-     */
 }
