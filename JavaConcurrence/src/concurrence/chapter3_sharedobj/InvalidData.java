@@ -1,5 +1,8 @@
 package concurrence.chapter3_sharedobj;
 
+/*
+ * 失效数据
+ */
 public class InvalidData {
     
     /*当一个线程调用了set更新num后，另一个线程调用get去访问这个num，

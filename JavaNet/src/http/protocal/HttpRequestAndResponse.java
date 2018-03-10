@@ -11,25 +11,48 @@ public class HttpRequestAndResponse {
      */
     /*
      * 起始行:<method> <request-url> <version>
-     * 其中<method>:GET,POST,DELETE,UPDATE...
+     * <method>:GET,HEAD,PUT,POST,TRACE,OPTIONS,DELETE,UPDATE
      * <request-url>:http(s)://www.xxx.com/nn/inedex.html<;/?/#>(;表示参数 ?表示查询 #表示片段)
      * <version>:HTTP/<major>.<minor>
      */
     /*
      * 首部/请求头(HEADER)
      * Accept:e.g text/*
-     * Host:www.xxx.com
+     * Host:www.xxx.com:<port>
+     * cookie
+     * ...
+     * 在头部还可能有一些认证相关的字段,比如:
+     * 对于JWT,有
+     * Authorization:'Bearer '+<token>
      */
     /*
      * 请求体(entity-body)
      */
     
+/*
+ * -------------------------------------------------------------------------------------------------
+ */
    
     /*
      * Http 响应格式
      */
     /*
      * 起始行:<version> <status> <reason-phrase>
+     * 状态码(status)含义如下:
+     * 100-199 信息性状态码
+     * 200-299 成功状态码
+     *  200 OK
+     *  202 Accepted
+     * 300-399 重定向状态码
+     *  301 Moved Permanemtly
+     * 400-499 客户端错误状态码
+     *  400 Bad Request 错误请求
+     *  401 Unauthorized 未认证
+     *  403 Forbidden 
+     *  404 Not Found
+     * 500-599 服务器错误状态码
+     *  500 Internal Server Error
+     *  502 Bad Geteway 
      */
     /*
      * 首部(HEADER)
