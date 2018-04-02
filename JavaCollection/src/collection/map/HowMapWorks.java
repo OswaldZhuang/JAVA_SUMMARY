@@ -36,7 +36,7 @@ public class HowMapWorks {
      * 在该类中有几个容易让人迷惑的关键词:
      * TREEIFIED 树化
      * CAPACITY 容量,该容量指的是bucket的个数
-     * THRESHOLD 阈值,即临界值
+     * THRESHOLD 阈值,即临界值,是触发resize的值,为(capacity * load factor)
      * 
      * HashMap中几个比较重要的常量值
      * static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; 初始容量(初始bucket的数量),为16,实际上HashMap的初始容量必须时2的次方
@@ -71,15 +71,18 @@ public class HowMapWorks {
      * 其中的hash(key)方法如下:
      * static final int hash(Object key) {
      *   int h;
+     *   //实际上该运算等价于key的hashCode的高16位与之低16位进行亦或运算
      *   return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
      * }
      * 该方法重新计算了一遍key的hash值,也就是说其实HashMap其实并没有用key本身的hashCode方法(由于bucket的个数时2的次方个,因此
      * 直接采用key的hashCode很容易引起冲突(collide,为什么呢?),所以需要做如上转化)
      * 
      * final Node<K,V> getNode(int hash, Object key)方法的具体实现为:
-     * 1.首先通过hash值查找在table中的位置,然后检查第一个Node(first),如果该节点的的值符合要求则返回第一个节点
+     * 1.首先通过hash值查找在table中的位置(采用((n - 1) & hash)确定数组的索引位置,n是数组长度,这样做的好处在于由于n是2的次方
+     * 所以(n - 1) & hash等价于hash%n(取模使得hash的分布更加均匀),但是其速度更快,),
+     * 然后检查第一个Node(first),如果该节点的的值符合要求则返回第一个节点
      * 2.如果不符合要求,检查first.next是否为空,为空就直接返回空
-     * 3.如果不为空,那么检查这个节点是否时TreeNode,如果是,那么就返回TreeNode的getTreeNode(hash,key)方法,也就是
+     * 3.如果不为空,那么检查这个节点是否是TreeNode,如果是,那么就返回TreeNode的getTreeNode(hash,key)方法,也就是
      * 如果Node是一个树节点,那么调用树节点(TreeNode)的相关查找方法
      * 4.如果不是一个树节点,那么就线性遍历这个bucket(不断调用next方法)
      * 
@@ -96,7 +99,7 @@ public class HowMapWorks {
      * evict表示:如果为false,则表示table处于creation mode
      * 返回值是之前的Node的value值,如果插入的值之前不存在,则返回空,如果存在,视情况而返回相应的值
      * 1.首先判断table是否为空,如果为空的话,那么调用resize方法重新构造HashMap然后得到table的长度
-     * 2.判断当前table中的相应hash位置是否为空,如果为空的话就在这个位置新建一个Node
+     * 2.判断当前table中的相应hash位置(也就是(n - 1) & hash位置)是否为空,如果为空的话就在这个位置新建一个Node
      * 3.如果不为空,那么再首先判断当前位置的Node的hash值与key值是否和要插入Node的hash值与key值相同,如果相同,那么把
      * 当前位置的Node赋值给一个临时变量e
      * 4.如果不满足上述条件,那么判断这个节点是否 是TreeNode,如果是,则调用TreeNode的putTreeVal方法插入节点,并把返回值
@@ -114,7 +117,17 @@ public class HowMapWorks {
      * 
      * resize方法实现如下:
      * final Node<K,V>[] resize()
-     * 
+     * 该方法会对table进行2倍扩容(如果容量为0的话就会进行初始化)
+     * 在这个方法中,会对threshold和table的长度进行修改(具体地说就是变为原来的两倍)
+     * 然后是开始转移原来的bucket中的Entry(使得Entry随着扩容而能够比较均匀的分散开),具体做法如下:
+     * 从0开始,遍历原来的table数组,用一个临时变量e存储数组中的值的引用,然后清空原来的引用,循环的过程中会有如下操作:
+     * 1.如果e没有下一个entry,那么就把它赋值给新的table中的某个位置(具体是newTab[e.hash & (newCap - 1)],这个位置可能是
+     * [原来的位置]也可能是[原来的位置+原来的长度],这样做的另一个好处是原来索引值一样(即hash冲突)的Entry会因为此次计算重新分配位置)
+     * 2.如果e是一个树节点(TreeNode),那么调用TreeNode#split方法
+     * 3.剩下的情况(e不是树节点并且其之后还有节点,也就是长度大于一的链式结构),则不断遍历该链表,循环过程操作如下:
+     *   3.1.如果计算出来的索引值在原位置(即e.hash & oldCap) == 0),那么就会保持原位置不动
+     *   3.2.如果计算出来的索引值在[原来的位置+原来的长度]的位置,那么就会将它移到那个位置下
+     *   *这个过程中链表中Entry的顺序其实是没有发生改变的(详见代码实现)
      */
     
 

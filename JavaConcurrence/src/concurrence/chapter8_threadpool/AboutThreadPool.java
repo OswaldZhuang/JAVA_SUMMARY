@@ -1,10 +1,5 @@
 package concurrence.chapter8_threadpool;
 
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 /*
  * 线程池
  * 
@@ -23,6 +18,7 @@ public class AboutThreadPool {
      *    void shutdown()(正在执行的任务不会被停掉,而新来的任务不会被执行) 
      *    List<Runnable> shutdownNow(强制关闭,正在执行的任务会立刻停止,返回正在等待执行的任务)
      *    boolean awaitTermination(long timeout, TimeUnit unit)(等待要么所有任务完成,要么超时才停止ExectorService)
+     *    实际上线程池中任务的终止是采用中断的方式
      *  2.提交任务
      *    <T> Future<T> submit(Callable<T> task)(提交一个callable任务)
      *    <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)(提交一系列的任务,会等待所有任务完成,
