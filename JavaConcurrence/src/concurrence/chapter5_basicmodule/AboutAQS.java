@@ -62,13 +62,14 @@ public class AboutAQS {
      * 进行更新
      * private volatile int state 同步状态,如果为0,则说明该锁没有被线程占有
      * static final long spinForTimeoutThreshold = 1000L 自旋的超时阈值
-     * private Node enq(final Node node)
+     * private Node enq(final Node node) 
      * 节点入队:具体操作为,不断循环(for(;;),这样做是为了不断尝试直到CAS操作完成),在此期间采用CAS将Node设置为队尾
      * 返回node的前驱
+     * 对于队列初始化的情况会比较特殊,大致说来:头结点会设置成为new Node(),再将参数中传进来的node追加在head后面
      * 
      * private Node addWaiter(Node mode) 
-     * 在队尾加入等待节点(线程),传入的参数为等待的模式,Node.EXCLUSIVE或者Node.SHARED
-     * 首先尝试采用CAS操作来将节点(节点中的线程为当前线程)设置到队尾,如果失败的话,就采用enq方法
+     * 在队尾加入等待节点(线程),传入的参数为等待的模式,Node.EXCLUSIVE或者Node.SHARED,返回新的节点
+     * 首先尝试采用CAS操作来将节点(节点中的线程为当前线程)设置到队尾,如果失败的话(或者队列还没有初始化),就采用enq方法
      *   
      * private void unparkSuccessor(Node node)
      * 唤醒Node后继
@@ -129,6 +130,8 @@ public class AboutAQS {
      * 首先将node设置为头结点
      * 当 propagate大于0 或者 原来的头结点为空 或者 原来头结点的等待状态小于0 
      * 则获取当前头节点的下一个节点,如果下一个节点为空或者是共享模式则doReleaseShared()
+     * 这一步是使得锁释放能够传播的关键,只要调用doReleaseShared,那么后继节点就会被唤醒,而后继节点一般是挂起并处于doAcquireShared中
+     * 而doAcquireShared中又会调用setHeadAndPropagate,这样就相当于递归的将释放操作传递下去
      * 
      * public final void acquireSharedInterruptibly(int arg)
      * private void doAcquireSharedInterruptibly(int arg)

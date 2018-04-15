@@ -66,7 +66,7 @@ public class UseString {
     public void aboutStringIntern() {
         /*
          * 关于String的本地函数intern()
-         * public native String inter()
+         * public native String intern()
          * 当该方法被调用的时候,如果字符串常量池中存在该
          * String对象(equals方法返回true),
          * 那么直接返回常量池中的对象,否则就将其加入到

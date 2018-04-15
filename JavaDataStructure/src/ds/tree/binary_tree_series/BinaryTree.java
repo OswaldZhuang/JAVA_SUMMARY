@@ -1,4 +1,4 @@
-package ds.tree;
+package ds.tree.binary_tree_series;
 
 import java.util.Stack;
 

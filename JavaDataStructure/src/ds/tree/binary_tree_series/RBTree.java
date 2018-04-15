@@ -1,4 +1,4 @@
-package ds.tree;
+package ds.tree.binary_tree_series;
 
 /*
  * 红黑树:

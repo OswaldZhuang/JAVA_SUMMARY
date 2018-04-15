@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 享元模式:
  * 使用共享对象来有效支持大量细粒度的对象
  * 其思想在于对象的可共享部分和不可共享部分的剥离
+ * e.g Java的自动装箱
  */
 public class FlyWeightPattern {
     

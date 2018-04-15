@@ -1,5 +1,9 @@
 package concurrence.chapter8_threadpool;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.Future;
+
 /*
  * 线程池
  * 
@@ -28,6 +32,8 @@ public class AboutThreadPool {
      * Abstract Class java.util.AbstractExecutorService implements ExecutorService
      * 该类提供ExecutorService执行任务方法的默认实现(submit,invokeAll,invokeAny),返回结果为java.util.concurrent.RunnableFuture
      * invokeAny方法底层是由java.util.concurrent.ExecutorCompletionService执行的
+     * public <T> Future<T> submit(Callable<T> task) 该方法传入的callable会被包装成为FutureTask,再调用execute继续执行
+     * execute在子类中实现
      *  
      * Interface java.util.concurrent.ScheduledExecutorService extends ExecutorService
      * 执行定时任务的执行器
@@ -64,8 +70,12 @@ public class AboutThreadPool {
      * java.util.Executors
      * 该类是产生线程池的工厂类
      */
+    
+    /*
+     * Interface java.util.concurrent.CompletionService<V>
+     * 
+     * Class java.util.concurrent.ExecutorCompletionService<V> implements CompletionService<V>
+     */
     public static void main(String[] args) {
-        //System.out.println(System.getProperty("java.class.path"));
-        System.getProperties().forEach((k,v)->System.out.println(k));
     }
 }

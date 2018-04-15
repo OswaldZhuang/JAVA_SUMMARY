@@ -3,7 +3,7 @@ package concurrence.chapter7_cancelandclose;
 /*
  * 取消
  */
-public class Cancle {
+public class Cancel {
     /*
      * 任务的取消,通常的做法是设置一个
      * 标志位,在执行任务的时候不断的轮询
