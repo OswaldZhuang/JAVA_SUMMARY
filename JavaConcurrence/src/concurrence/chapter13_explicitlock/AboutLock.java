@@ -10,6 +10,7 @@ public class AboutLock {
      * 使用显示锁的主要原因在于提高程序的灵活性
      * 实际上,区别于synchronized关键字,显示锁是在java代码层面上实现锁的获取与释放
      * (当然阻塞线程也需要底层的一些操作,不过这些操作已经由java类库封装好了)
+     * 显示锁和synchronized拥有相同的语义
      */
     
     /*

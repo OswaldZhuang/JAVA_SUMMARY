@@ -182,10 +182,13 @@ public class AboutAQS {
     
     /*
      * AQS中的另一个内部类是ConditionObject,它实现了Condition接口
-     * java.util.concurrent.locks.Condition实际上就是一种条件队列(类比于Object的wait,signal等方法)
+     * java.util.concurrent.locks.Condition实际上就是一种条件队列(类比于Object的wait,signal等方法
+     * 实际上ConditionObject和Object在条件队列上有相同的语义)
+     * 由于调用object#notify等方法需要首先获得对象的monitor,因此ConditionObject定义在AQS(实际上也就是锁)的
+     * 内部也是可以说得通的
      * 内部的属性有:
-     * private transient Node firstWaiter
-     * private transient Node lastWaiter
+     * private transient Node firstWaiter 条件队列的第一个等待者
+     * private transient Node lastWaiter 条件队列的最后一个等待者
      * 
      * private Node addConditionWaiter()
      * 将等待者加入条件队列,返回值是当前线程的node
@@ -193,16 +196,29 @@ public class AboutAQS {
      * private void unlinkCancelledWaiters()
      * 将条件队列中CANCELLED状态的的节点去除
      * 
-     * public final void signal()
+     * public final void signal() 该方法会唤醒firstWaiter,
+     * 执行过程为:首先判断锁是否是该线程持有的,如果不是,那么就会抛出IllegalMonitorStateException
+     * 否则执行doSignal
      * private void doSignal(Node first)
+     * 该方法执行的只要过程是,first节点开始(包括first),找到第一个非空且没有Cancel的节点将其加入到同步队列(通过ransferForSignal方法)
      * 
      * public final void signalAll()
      * private void doSignalAll(Node first)
-     * 该方法实际上是循环调用doSignal达到释放所有等待线程的目的
+     * 类似的,不过是将所有条件队列上的非空节点加入到同步队列
+     * 
+     * final boolean transferForSignal(Node node)
+     * 如果CAS设置CONDITION为0失败的话就返回false(说明已经被取消)
+     * 否则加入到同步队列末尾,如果等待状态大于0(取消)或者CAS设置为SINGAL失败,那么
+     * 唤醒该线程
      * 
      * public final void awaitUninterruptibly()
      * 
      * public final void await() throws InterruptedException
+     * 该方法是ConditionObject的主要方法,其主要执行过程如下:
+     * 首先检查当前线程是否中断,如果是,那么抛出InterruptedException
+     * 然后将当前线程加入到条件队列中,再释放掉自己持有的锁(实际上也就是唤醒同步队列头结点的后继节点)
+     * 之后检查是否在同步队列中(isOnSyncQueue),如果不在,那么就将该线程挂起,如果在(也就是说被signal操作加入到了同步队列)
+     * 那么跳出循环(整个过程由while控制)
      * 
      * public final long awaitNanos(long nanosTimeout) throws InterruptedException
      * 

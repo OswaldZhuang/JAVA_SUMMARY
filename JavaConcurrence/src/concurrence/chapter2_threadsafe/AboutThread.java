@@ -31,6 +31,12 @@ public class AboutThread {
     /*
      * public final void stop()
      * 该方法被标注为@Deprecated,是不推介使用的
+     * 该方法会强制线程停止任务,实际上该方法底层调用了stop0(new ThreadDeath())
+     * Thread调用了stop()方法后会会抛出ThreadDeath这样的异常(实际上它继承了Error)
+     * 而程序中不能简单就catch住ThreadDeath,这是因为try-catch-finally会在线程真正
+     * 被终止前先执行,如果catch住了这个异常,那么就必须将这个对象重新抛出
+     * 该方法是天生不安全的,因为在调用这个方法的时候会将该线程上持有的所有monitor都释放掉,这样,被某些monitor
+     * 所保护的资源就有可能被其他竞争得到锁的线程所修改,造成同步的问题
      */
     
     /*
@@ -52,6 +58,13 @@ public class AboutThread {
     /*
      * public static native void yield()
      * 线程让步,意味着线程可能会让出cpu供其他线程执行,然而,这只是一种暗示,调度器可以让线程让出也可以不让出cpu
+     */
+    
+    /*
+     * public final void setDaemon(boolean on) 将线程设置为守护(后台)线程,实际上守护线程与普通(用户)线程
+     * 并没有什么本质上的区别,当所有正在运行的线程都是守护线程的时候,JVM就会退出.而JVM退出的时候,仍在执行的守护线程会被直接终止掉,
+     * 因此守护线程最好执行"内部"任务(比如定时清理缓存)
+     * 垃圾回收器就是守护线程.
      */
     
 
