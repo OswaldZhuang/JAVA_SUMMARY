@@ -1,0 +1,8 @@
+ls(list information about the files)
+-l 显示 文件(目录)详细信息
+-a 显示全部文件及目录
+-h human-readable 除了有-l的功能,文件大小以K,M..显示
+-F 目录后会追加/以表示该字符串为目录
+-R 递归列出子目录
+-S 文件由大到小排序
+-t 以修改时间又先到后排序

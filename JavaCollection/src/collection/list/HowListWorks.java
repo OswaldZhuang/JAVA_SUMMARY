@@ -3,7 +3,13 @@ package collection.list;
 public class HowListWorks {
     
     /*
-     * ArrayList的工作原理  
+     * Interface java.util.List<E> extends Collection<E>
      */
+	
+	/*
+	 * abstract class java.util.AbstractList<E> extends AbstractCollection<E> implements List<E>
+	 */
+	
+	
 
 }

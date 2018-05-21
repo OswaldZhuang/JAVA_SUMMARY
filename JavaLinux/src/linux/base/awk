@@ -1,0 +1,41 @@
+awk 是一种文本处理工具
+
+awk '[pattern] {action}' <file_name>
+'[pattern] {action}' 中[pattern]表示文件的行所满足的条件,action表示在满足这些条件下具体会执行
+什么样的动作
+awk的基本操作是逐行的读取文件,根据[pattern]中的条件筛选出需要的文本,再根据action做出相应的动作
+[pattern] 与 {action}可省略其中之一
+
+比如说:
+    awk '$3 > 0 {print $1*$2}' a.txt
+            表示a.txt中每一行第三个文本大于0(以tab或空格分割)的话,就输出第一个和第二个文本相乘的值
+    *注:$1表示第一个文本,$2表示第二个.....$0表示整行文本
+
+如果在''之间的程序比较长,那么可以指定响应的程序文件,如果使用程序文件来执行awk,那么可以:
+    awk -f <program_file_name> <file_name>
+    
+awk中,NF表示每行的数量,比如:
+    awk '{print NF}' a.txt
+            表示打印出a.txt中每行的文本数量
+     
+NR表示当前的行数
+
+如果需要更加格式化的输出,那么可以考虑使用printf
+printf(format,value1,value2,....)
+format是需要打印出的字符串的格式,value*是打印的文本,value会穿插于format中,而控制value的输出格式
+的是format里面定义的规格
+比如:
+    printf("total pay for %s today is %.2f \n", $1, $2)
+            其中%s表示字符串形式输出,%.2f表示以float输出,并保留2位小数
+            
+BEGIN/END 用于匹配处理第一行之前(最后一行之后)的位置,实际上也就是开始进行真正的文本处理啊之前(后)做的动作
+比如:
+    BEGIN {print "this is title"}
+    
+awk中内置了一些函数方便对文本进行操作
+    length() 计算字符串中字符的数量
+    if-else
+    while
+    for
+            数组
+*控制语句中的代码不要有多余空格,比如awk '{for(i=1;i<=NF;i++)print $i;}' words.txt       

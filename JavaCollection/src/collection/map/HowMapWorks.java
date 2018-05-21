@@ -35,22 +35,31 @@ public class HowMapWorks {
      * HashMap的工作原理
      * 在该类中有几个容易让人迷惑的关键词:
      * TREEIFIED 树化
-     * CAPACITY 容量,该容量指的是bucket的个数
+     * CAPACITY 容量,该容量指的是bucket的个数,即数组长度
      * THRESHOLD 阈值,即临界值,是触发resize的值,为(capacity * load factor)
      * 
      * HashMap中几个比较重要的常量值
-     * static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; 初始容量(初始bucket的数量),为16,实际上HashMap的初始容量必须时2的次方
+     * static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; 初始容量(初始bucket的数量,即数组长度),为16,实际上HashMap的初始容量必须时2的次方
      * static final float DEFAULT_LOAD_FACTOR = 0.75f;默认的加载因子的值为0.75
-     * static final int TREEIFY_THRESHOLD = 8;树化的阈值为8,即当一个bucket下面的Entry数量超过8之后,这个bucket就会转化为树
+     * static final int TREEIFY_THRESHOLD = 8;树化的阈值为8,即当一个bucket下面的Entry数量超过8之后,这个bucket就会转化为树(同时也要求数组长度大于64)
      * 为什么这个值为8?理想状态下HashMap中的每个bucke中Entry的数量符合泊松分布,当loadFactor为0.75时,bucket中元素为8的概率基本为0
      * (具体数据可以参考HashMap的源代码),所以正常(理想)情况下一个bucket里面的Entry数量时几乎不可能为8的,如果为8,那么hash方法就设计的有
      * 问题,bucket下面的Entry就需要转化为树形结构
      * static final int UNTREEIFY_THRESHOLD = 6;由树转化为链式结构的阈值,在resize()时,如果bucket中Entry的数量小于这个值那么就会转化为链式结构
-     * static final int MIN_TREEIFY_CAPACITY = 64;最小的树化容量,只有HashMap中Entry数量的总和大于等于64的时候才会树化,换句话说,树化的条件不仅
-     * 要求一个bucket下面的Entry数量大于8,同时也要求所有的Entry的数量至少为64,这样做是为了防止一个bucket中的Entry数量过多,如果仅仅是一个bucket中的Entry
-     * 数量大于8而不满足总体数量大于等于64,那么就不会树化,而是rehash.这个值应该至少是TREEIFY_THRESHOLD的4倍以避免树化和扩容之间的冲突
+     * static final int MIN_TREEIFY_CAPACITY = 64;最小的树化容量,当数组的长度大于64的时候才会树化,否则只是resize.
      * 
-     * 
+     * 总结而言,HashMap的构造规则如下:
+     *           NodeA0 -> NodeA1 -> NodeA2 -> ... (当链式结构的长度大于8并且数组长度大于64时,那么该bucket就会转化为树形结构)
+     *               |
+     *           NodeB0 -> NodeB1 -> NodeB2 -> ...(当bucket中元素的个数小于6,那么该bucket就会从树形结构转化为链式结构)
+     *               |
+     *           NodeC0 -> NodeC1 -> NodeC2 -> ... 
+     *               |
+     *           Node
+     *               |
+     *              ....
+     *            (初始的数组长度为16,当HashMap中所有的元素的数量大于阈值(capacity*loadFactor)时,会进行resize)
+     *  
      * HashMap中用于存储值的内部类为Node<K,V>(也就是上文所指的Entry),它存储了节点的hash值,key,value以及下一个节点的引用(next)
      * hash的计算是通过Objects.hashCode(key) ^ Objects.hashCode(value)实现的
      * 而equals是通过Objects.equals(key, e.getKey()) && Objects.equals(value, e.getValue())实现的
@@ -60,7 +69,7 @@ public class HowMapWorks {
      * 用于在iterator迭代时的快速失败
      * int threshold;需要rehash的阈值
      * 
-     * HashMap中核心的构造函数public HashMap(int initialCapacity, float loadFactor) 该构造函数允许你制定加载因子和初始bucket数量(容量)
+     * HashMap中核心的构造函数public HashMap(int initialCapacity, float loadFactor) 该构造函数允许你指定加载因子和初始bucket数量(容量)
      * 但需要注意,这个初始容量会被HashMap的static final int tableSizeFor(int cap)方法转化为2的次方的数(比如16,32,64...)
      * 
      * get方法实现如下:
@@ -128,7 +137,66 @@ public class HowMapWorks {
      *   3.1.如果计算出来的索引值在原位置(即e.hash & oldCap) == 0),那么就会保持原位置不动
      *   3.2.如果计算出来的索引值在[原来的位置+原来的长度]的位置,那么就会将它移到那个位置下
      *   *这个过程中链表中Entry的顺序其实是没有发生改变的(详见代码实现)
+     *   
+     *   
+     *   final void treeifyBin(Node<K,V>[] tab, int hash) 将bucket树化,tab为Map的数组,hash为bucket的hash值
+     *   如果tab为空或者长度小于MIN_TREEIFY_CAPACITY,那么只是进行resize操作
+     *   否则,首先通过(n-1)&hash找到数组中的位置,然后遍历该bucket上的链表,每次遍历的时候,replacementTreeNode将
+     *   链表集结点变为树节点TreeNode(实际上该方法也就只是新建了一个树节点对象)
+     *   最后调用TreeNode(头结点)的treefy(tab)方法真正完成树化
+     *   
+     *   public V remove(Object key) 移除Map中的元素
+     *   
+     *   final Node<K,V> removeNode(int hash, Object key, Object value, boolean matchValue, boolean movable)
+     *   与添加元素的流程类似
      */
+	
+	/*
+	 * HashMap$EntrySet
+	 * EntrySet实际上是HashMap的一个视图,其并不包含HashMap中的有效数据,仅仅是定义了一些
+	 * 有关的操作,由于是内部类,因此EntrySet可以访问HashMap中定义的内部属性
+	 */
+	
+	/*
+	 * HashMap$EntryIterator
+	 */
+	
+	/*
+	 * HashMap$EntrySpliterator
+	 */
+	
+	/*
+	 * HashMap$HashIterator
+	 */
+	
+	/*
+	 * HashMap$HashSpliterator
+	 */
+	
+	/*
+	 * HashMap$Values
+	 */
+	
+	/*
+	 * HashMap$ValueIterator
+	 */
+	
+	/*
+	 * HashMap$ValueSpliterator
+	 */
+	
+	/*
+	 * HashMap$KetSet
+	 */
+	
+	/*
+	 * HashMap$KeySpliterator
+	 */
+	
+	/*
+	 * HashMap$TreeNode<K,V>
+	 * 该类定义了一个红黑树节点,除了常规的定义外,还定义了TreeNode<K,V> prev,
+	 */
     
 
 }

@@ -4,6 +4,9 @@ package ds.tree.binary_tree_series;
  * 1.左子树所有节点的值小于根节点的值
  * 2.右子树所有节点的值大于根节点的值
  * 3.没有值相等的节点
+ * 二叉搜索树的搜索效率:
+ * 当树是一棵接近于平衡的二叉树时,查找效率是O(logn)的倍数(因为树的高度即为logn)
+ * 当树退化为一棵单支结构时,树的高度为n,查找效率为O(n)
  */
 public class BSTree<T extends Comparable<T>> {
     

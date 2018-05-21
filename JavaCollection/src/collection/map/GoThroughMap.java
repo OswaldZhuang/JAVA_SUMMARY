@@ -32,6 +32,8 @@ public class GoThroughMap {
     
     public void useIterator() {
         Iterator<Entry<String, String>> iterator = map.entrySet().iterator();
+        //Iterator<String> iterator = map.keySet().iterator();
+        //Iterator<String> iterator = map.values().iterator();
         while(iterator.hasNext()) {
             
         }
@@ -43,5 +45,5 @@ public class GoThroughMap {
          */
         map.forEach((K,V)->{});
     }
-
+    
 }
