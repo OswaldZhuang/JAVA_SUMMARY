@@ -1,7 +1,5 @@
 package concurrence.chapter6_taskexecution;
 
-import java.util.concurrent.ExecutionException;
-
 /*
  * java线程中的执行任务
  */
@@ -68,5 +66,9 @@ public class ExecutionTask {
      * 类似于Runnable,Callable也是表示线程执行的任务,只有一个方法
      * V call() throws Exception 表示该任务会返回结果,并且可以抛出异常
      */
+	
+	/*
+	 * abstract class java.util.concurrent.ForkJoinTask<V> implements Future<V>
+	 */
 
 }

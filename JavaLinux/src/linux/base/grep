@@ -1,3 +1,12 @@
 grep(globally search a regular expression and print)
 
-grep是一款文本搜索工具
+grep是一款文本搜索工具,
+
+grep <option> '<exp>' <file_name>
+
+-i 忽略大小写
+-L 列出不符合规则的文件名
+-n 输出行号
+-c 输出匹配的个数
+--color=auto 将查找到的关键词以颜色输出
+-E 匹配多个表达式,比如:grep -E 'exp1|exp2|exp3' <file_name>

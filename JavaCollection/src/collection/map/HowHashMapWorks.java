@@ -1,7 +1,7 @@
 package collection.map;
 
 
-public class HowMapWorks {
+public class HowHashMapWorks {
     
     /*
      * Java的Map系列中
@@ -59,9 +59,10 @@ public class HowMapWorks {
      *               |
      *              ....
      *            (初始的数组长度为16,当HashMap中所有的元素的数量大于阈值(capacity*loadFactor)时,会进行resize)
+     *            (在bucket中的元素个数大于8并且数组的长度小于于64的时候也会resize)
      *  
      * HashMap中用于存储值的内部类为Node<K,V>(也就是上文所指的Entry),它存储了节点的hash值,key,value以及下一个节点的引用(next)
-     * hash的计算是通过Objects.hashCode(key) ^ Objects.hashCode(value)实现的
+     * hash的计算是通过Objects.hashCode(key) ^ Objects.hashCode(key)>>>16实现的
      * 而equals是通过Objects.equals(key, e.getKey()) && Objects.equals(value, e.getValue())实现的
      * 
      * HashMap中的bucket的存储方式是数组,通过transient Node<K,V>[] table;
