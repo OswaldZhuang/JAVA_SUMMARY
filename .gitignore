@@ -1,8 +1,10 @@
 /bin/
 /.settings/
+/.idea
+/target
 .classpath
 .project
-
+*.iml
 
 # Package Files #
 *.jar

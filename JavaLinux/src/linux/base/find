@@ -1,0 +1,2 @@
+递归的删除某文件夹下的名字为m的所有文件
+find . -name "m" -type f -print -exec rm -rf {} \;

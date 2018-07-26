@@ -1,6 +1,5 @@
 package spring.ioc;
 
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
  * 依赖注入(DI),控制反转(IOC)
  * 即对内部bean的依赖并不是由自身控制,而是由Spring容器控制
  */
-
 public class Assemble {
     
     @Component

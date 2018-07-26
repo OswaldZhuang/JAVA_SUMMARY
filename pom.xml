@@ -10,6 +10,7 @@
     <module>JavaCollection</module>
     <module>JavaConcurrence</module>
     <module>JavaDataStructure</module>
+    <module>JavaDistribution</module>
     <module>JavaDB</module>
     <module>JavaDesignPattern</module>
     <module>JavaException</module>

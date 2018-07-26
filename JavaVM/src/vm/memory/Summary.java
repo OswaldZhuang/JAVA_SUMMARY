@@ -7,7 +7,8 @@ public class Summary {
      *      JDK1.8称之为Metaspace(元数据区)
      *      
      * 2.堆(Heap):用于保存对象
-     * 
+     *
+
      * 3.直接内存(Direct Memory):直接向操作系统申请的内存,比如NIO的ByteBuffer.allocate方法
      * 
      * 4.栈(Stack):线程私有的空间,栈中保存的是栈帧,栈帧保存着[局部变量表,操作数栈,帧数据区]
