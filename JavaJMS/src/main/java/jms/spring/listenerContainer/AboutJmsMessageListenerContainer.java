@@ -1,8 +1,6 @@
 package jms.spring.listenerContainer;
 
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
 public class AboutJmsMessageListenerContainer {
     /*
      * spring jms listener进行了封装

@@ -1,0 +1,5 @@
+sort用于对文件内容排序,被排序的元素是文件的行
+sort <option> <-o filename> <-t split>
+-n 按照数值大小排序
+-r 降序(相反顺序)排列
+-k <num> 按照num列排序

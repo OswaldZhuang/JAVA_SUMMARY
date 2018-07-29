@@ -1,0 +1,32 @@
+Linux的文件系统
+
+背景知识:
+硬盘的最小存储单元为"扇区"(sector),每个sector存储512byte(0.5KB),操作系统读取
+磁盘时,会一次读取多个sector,即一个块(block),block是文件存取的最小单元,block最常见
+大小为4KB
+
+文件(file)的信息被存放在两个位置:
+    data block(数据块):存放file的内容
+    inode(索引节点):存放file的元数据,有:
+        *文件的字节数
+        *文件拥有者User ID
+        *文件所在的组Group ID
+        *文件的读,写,执行权限
+        *文件的时间戳,包括:ctime(inode上一次变动的时间),mtime(文件内容上一次变动的时间),atime(文件上一次打开的时间)
+        *链接数,即有多少文件名指向这个node
+        *data block的位置
+    inode是file的唯一标识,
+    inode一般是128byte或者256byte
+            文件的文件名是被存放在了目录(directory)中(而不是inode中,实际上directory是一种特殊的文件,
+            它存储着文件名与inode编号之间的映射)
+查看文件系统中inode使用情况:#df -i
+查看文件的inode:#ls -i 或者 #stat <file_name>
+    
+文件系统被创建之后data block和inode的数量也随之固定
+当操作系统查看某个文件内容的时候,会经过以下步骤:
+    1.directory的inode
+    2.directory的data block
+    3.file的indoe
+    4.file的data block
+
+    

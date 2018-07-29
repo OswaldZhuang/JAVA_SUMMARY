@@ -1,0 +1,5 @@
+uniq用于检查及删除文本总重复出现的行列
+uniq <option> <filename>
+-c 在每列前边显示该行重复出现的次数
+
+uniq <filename>会显示删除重复行后的结果

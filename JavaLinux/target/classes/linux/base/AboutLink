@@ -1,0 +1,27 @@
+关于链接
+
+假设某个文件A的data block为 A_DATA_BLOCK,而它的inode为A_INODE
+A所在的目录为ADIR,相应的data block为ADIR_DATA_BLOCK,inode为ADIR_INODE
+于是A_INODE-->A_DATA_BLOCK
+ADIR_INODE-->ADIR_DATA_BLOCK(A_NAME,A_INODE_NUM)-->A_INODE
+
+硬链接(hard link):
+    B是A的硬链接,B所在的目录为BDIR,那么有BDIR_INODE-->BDIR_DATA_BLOCK(B_NAME,A_INODE_NUM)-->A_INODE-->A_DATA_BLOCK
+            这样,B其实只是一个存储在目录中的文件名,不同的文件名实际上指向的同一个INODE,如果删除某个文件名,其他的文件名访问不受影响,根据任何一个文件名
+            对文件进行修改,那么这个修改会写入到相同的inode与data block.硬链接的会使得A_INODE中的i_nlink增加
+相应的命令为 ln <origin_full_path_file_name> <target_full_path_file_name>  
+硬链接存在着一些不足的地方,具体在于:
+    1.不允许给目录创建硬链接(why?实际上反过来想,由于硬链接中的文件名是存在目录的数据块中的,假设建立了目录的硬链接,就相当与在硬链接的目录里存了被链接的目录,
+            而一般情况下,目录里存的目录应该是这个目录下面的子目录,如果存了其他路径的势必会造成一定的混淆)
+    2.无法在不同的文件系统的文件建立链接(因为inode仅仅能够在一个分区有作用)  
+        
+软连接/符号连接(soft link/symbolic link):
+    C是A的软链接,C所在的目录为CDIR,那么有CDIR_INODE-->CDIR_DATA_BLOCK(C_NAME,C_INODE_NUM)-->C_INODE-->C_DATA_BLOCK(A_NAME,ADIR_INODE_NUM)-->ADIR_INODE-->ADIR_DATA_BLOCK(A_NAME,A_INODE_NUM)-->A_INODE-->A_DATA_BLOCK
+             这样,实际上C是一个真正存在的文件,只不过这个文件当中存储的是A所在的目录的inode的地址以及A的文件名.软链接不会使得A_INODE中的i_nlink增加
+响应的命令为ln -s <origin_full_path_file_name> <target_full_path_file_name>
+
+与链接有关的命令:
+    #ls -li 列出文件的详细信息包括链接情况
+            如何找到一个文件的所有硬链接:
+      1.使用ls -i <file_name>查看某个文件的inode_num
+      2.使用find -inum <inode_num>找到所有相同inode_num的文件的文件名

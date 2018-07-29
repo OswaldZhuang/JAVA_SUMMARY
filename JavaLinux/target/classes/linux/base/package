@@ -1,0 +1,11 @@
+linux中的包管理
+
+-apt(advanced packaging tool)
+ apt是Debian下的包管理工具(Ubuntu隶属于Debian)
+ Ubuntu采用集中式的软件仓库机制,将软件统一的并且分门别类的存放在软件仓库中,然后将其设置到镜像服务器中,Ubuntu
+   用户通过apt命令访问镜像,下载相应的软件并安装
+   镜像的配置在/etc/apt/sources.list中,该文件中配置了多个镜像,每个镜像提供不同的软件包,为了提高查找安装包的
+   效率,Ubuntu会存储一份索引以快速查找.同时,apt可以分析软件包的依赖关系,这样就简化了安装
+   执行apt-get install <software-name>时,apt会读取sources.list里相关的镜像并下载软件包,下载的软件
+   包存在/var/cache/apt/archives中
+   执行apt-get update时,apt会分析sources.list,连接镜像查找更新,如果有更新,则下载并存入/var/lib/apt/lists/
