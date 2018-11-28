@@ -1,4 +1,4 @@
-package vm.memory;
+package vm.gc;
 
 public class AboutGC {
     /*

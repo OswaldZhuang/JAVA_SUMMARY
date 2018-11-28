@@ -65,7 +65,8 @@ public class AboutReference {
 
     /*
      * strongly reachable:对象可以被线程访问而不需要遍历任何引用对象
-     * softly reachable:对象只能够通过遍历soft reference来访问
+     * softly reachable:对象只能够通过遍历soft reference来访问,也就是说SoftReference包装了该对象,(实际上Soft
+     * Reference和对象之间是强引用关系,但是虚拟机在处理的时候会当作'软可达'处理
      * weakly reachable:对象只能够通过遍历weak reference来访问,如果一个实例是weakly rechable,那么
      * 该实例便有资格finalize
      * phantom reachable:实例已经被finalize,而phantom reference指向该实例
@@ -103,7 +104,6 @@ public class AboutReference {
      * 虚引用 class java.lang.ref.PhantomReference<T> extends Reference<T>
      * 如果垃圾收集器监测到一个对象是phantom reachable,那么直接将该引用入队,虚引用
      * 所指向的引用对象是无法得到的(因为已经被finalize),因此get方法返回null
-     *
      */
 
     /*
@@ -113,11 +113,12 @@ public class AboutReference {
 
     /*
      * final class java.lang.ref.Finalizer extends FinalReference<Object>
+     * 当一个对象将要被回收的时候,JVM会将其包装为Finalizer对象
      *
      * private static class FinalizerThread extends Thread
      * 该线程在类的static块中启动,并且设置成为守护线程
-     * 在run方法中,将不断循环,并且将引用队列中的引用出队,交由sun.misc.JavaLangAccess
-     * 进行处理(调用其invokeFinalize(this.get())将自身所指向的引用处理掉)
+     * 在run方法中,将不断循环,并且将引用队列中的引用(Finalizer对象)出队,交由sun.misc.JavaLangAccess
+     * 进行处理(调用其invokeFinalize(this.get()),实际上就是调用Object的finalize方法)
      */
 
 

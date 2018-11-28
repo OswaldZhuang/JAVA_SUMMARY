@@ -34,7 +34,7 @@ package base.type;
 public class UseString {
     
     /*
-     * 该方法申明的string会保存在方法区中的
+     * 通过字面量申明的string会保存在MetaSpace中的
      * 常量池里
      */
     static String str1 = "zxd";
@@ -52,7 +52,7 @@ public class UseString {
     static String str2 = new String("zxd");
     
     /*
-     * 编译期间,JVM会对字符串进行优化
+     * 编译期间,JVM会对字符串进行优化替换
      * 比如:
      * String str = "as" + "df";
      * 优化后的结果直接为str = "asdf"
@@ -61,23 +61,45 @@ public class UseString {
      * String a = "as";
      * String b = "df";
      * String c = a + b;
+     * 但是如果用final修饰的话,还是会进行优化替换的
      */
     
-    public void aboutStringIntern() {
+    public static void aboutStringIntern() {
         /*
          * 关于String的本地函数intern()
          * public native String intern()
          * 当该方法被调用的时候,如果字符串常量池中存在该
          * String对象(equals方法返回true),
-         * 那么直接返回常量池中的对象,否则就将其加入到
-         * 常量池
+         * 那么直接返回常量池中的对象的引用,否则在常量池中添加指向堆中的字符串对象的引用
          */
+
+        /**
+         * str在调用intern方法后,其指向常量池中的引用,而常量池的引用指向堆中的字符串对象
+         * 而在声明字面量的时候查找到常量池中有该字符串,因此str1指向常量池中的引用
+         * 所以以下引用全部指向堆中的字符串对象
+         */
+        String str = new String("str") + new String("01");
+        String str_ = str;
+        str.intern();
+        String str1 = "str01";
+        System.out.println(str1 == str_);//true
+        System.out.println(str == str1);//true
+
+        /**
+         * intern方法不会改变str2a的值,
+         * 因此两个引用一个指向常量池中的字符串对象,一个指向堆中的字符串对象
+         */
+        String str1a = "str01";
+        String str2a = new String("str") + new String("01");
+        str2a.intern();
+        System.out.println(str2a == str1a);//false
     }
-    
+
     public static void main(String[] args) {
-        String str3 = "𠃾";
-        System.out.println(str3.getBytes().length);
+        //String str3 = "齉";
+        //System.out.println(str3.getBytes().length);
         //System.out.println(str1 == str2);
+        aboutStringIntern();
     }
 
 }

@@ -1,0 +1,18 @@
+kill 用于终结某个进程,或者向某个进程发出信号
+
+kill -l 列出所有可以发出的信号
+kill -s <Signal_Name> <PID>向指定进程号的进程发出指定的信号
+比如 kill -s QUIT 1234 向进程号为1234的进程发送QUIT信号
+
+     1       HUP (hang up) 挂起信号
+     2       INT (interrupt) 中断信号
+     3       QUIT (quit) 退出信号
+     6       ABRT (abort) 终止信号
+     9       KILL (non-catchable, non-ignorable kill) 强制退出
+     14      ALRM (alarm clock)
+     15      TERM (software termination signal) 终止信号
+
+kill -<Signal_name> <pid>
+比如 kill -HUP 1234 向进程号为1234的进程发送HUP信号
+kill -<Signal_num> <pid>
+比如 kill -9 1234 向进程号为1234的进程发送KILL信号

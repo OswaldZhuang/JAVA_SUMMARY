@@ -3,7 +3,7 @@ package concurrence.chapter6_taskexecution;
 /*
  * java线程中的执行任务
  */
-public class ExecutionTask {
+public class AboutFutureTask {
     
     /*
      * Interface java.lang.Runnable
@@ -67,8 +67,4 @@ public class ExecutionTask {
      * V call() throws Exception 表示该任务会返回结果,并且可以抛出异常
      */
 	
-	/*
-	 * abstract class java.util.concurrent.ForkJoinTask<V> implements Future<V>
-	 */
-
 }

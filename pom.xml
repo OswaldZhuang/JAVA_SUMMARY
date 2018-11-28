@@ -24,6 +24,7 @@
     <module>JavaTool</module>
     <module>JavaTX</module>
     <module>JavaVM</module>
+      <module>JavaWeb</module>
   </modules>
 
     <build>

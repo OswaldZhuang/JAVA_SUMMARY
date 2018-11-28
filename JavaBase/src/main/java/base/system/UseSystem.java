@@ -37,6 +37,8 @@ public class UseSystem {
      * 该方法用于从指定源数组拷贝数组到目标数组,src表示源数组,srcPos表示源数组的开始位置,dest表示目标数组,destPos表示目标数组的开始位置,
      * length表示要拷贝的长度
      * 该方法可能会抛出NullPointerException,ArrayStoreException(src或者dest不是数组;src和dest的数据类型不一致),IndexOutOfBoundsException
+     * arraycopy的原理如下:
+     *
      * public static native int identityHashCode(Object x);返回对象的hash值(该值和Object#hashCode()相同)
      * private static Properties props;
      * private static native Properties initProperties(Properties props);

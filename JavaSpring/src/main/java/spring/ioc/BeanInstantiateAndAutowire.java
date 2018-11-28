@@ -27,7 +27,7 @@ public class BeanInstantiateAndAutowire {
      */
 
     /*
-     * AbstractAutowireCapableBeanFactory#createBean实现了自动装配的的bean实例化
+     * AbstractAutowireCapableBeanFactory#createBean实现了自动装配的bean实例化
      * 如果有InstantiationAwareBeanPostProcessor,那么首先调用其回调方法处理beanDefinition
      * 然后调用doCreateBean得到bean实例
      */
@@ -35,7 +35,10 @@ public class BeanInstantiateAndAutowire {
     /*
      * AbstractAutowireCapableBeanFactory#doCreateBean
      * 调用createBeanInstance创建BeanWrapper(实际就是bean的实例)
-     * 如果有MergedBeanDefinitionPostProcessor,那么调用回调方法处理beanDefinition
+     * 如果有MergedBeanDefinitionPostProcessor,那么调用回调方法处理bean实例
+     * 接着,调用populateBean,该方法主要完成自动装配
+     * 然后,调用initializeBean,该方法首先实现Aware的调用(BeanNameAware,BeanClassLoaderAware,BeanFactoryAware),然后触发bean的init方法
+     * 最后,调用registerDisposableBeanIfNecessary注册DisposableBean
      */
 
     /*
@@ -47,6 +50,7 @@ public class BeanInstantiateAndAutowire {
      * (对于@Component的bean,如果显式的声明了有参数的构造器,那么调用autowireConstructor实例化bean
      * 如果没有显式声明构造器,那么调用instantiateBean实例化bean)
      */
+
 
     /*
      * AbstractAutowireCapableBeanFactory#autowireConstructor
@@ -60,7 +64,7 @@ public class BeanInstantiateAndAutowire {
      * AbstractAutowireCapableBeanFactory#instantiateBean
      * 实际上是调用的是InstantiationStrategy#instantiate方法来实例化bean,
      * 本质上是利用反射通过Constructor#newInstance来完成实例化,构造器是无参数的
-     * @Component修饰的bean采用该方法实例化
+     *
      */
 
     /*
@@ -73,4 +77,14 @@ public class BeanInstantiateAndAutowire {
      * 该方法和autowireConstructor类似,只是参与实例化的方法变成了beanDefinition中定义的
      * FactoryMethod
      */
+
+    /*
+     * AbstractAutowireCapableBeanFactory#populateBean
+     * 如果有InstantiationAwareBeanPostProcessor,那么调用其回调方法处理bean实例
+     * 接着判断BeanDefinition的autowire类型,然后调用不同的autowire方法,(autowireByName或者autowireByType)
+     * 然后如果有InstantiationAwareBeanPostProcessor,那么调用其回调方法处理bean实例,实际上此时会调用
+     * AutowiredAnnotationBeanPostProcessor#postProcessPropertyValues来注入需要自动装配的bean(也就是
+     * setter注入或者直接按值注入)
+     */
+
 }
