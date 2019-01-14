@@ -1,0 +1,6 @@
+-- 幻读问题
+-- 在同一个事务下，两次相同的读操作所返回的结果不一致（结果指的是查询的行数）
+-- InnoDB的事务隔离级别为REPEATABLE READ（可重复读）
+-- 采用Next Key Locking算法：
+-- 在某个事务进行查询的时候，innodb的加锁方式为对where后面的条件加锁，
+-- 比如 select * from students where age > 13;那么，在该事务提交之前，所有要对age > 13的写入事务都会阻塞

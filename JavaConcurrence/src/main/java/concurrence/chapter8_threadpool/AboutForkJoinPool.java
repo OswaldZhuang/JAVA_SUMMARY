@@ -389,6 +389,7 @@ public class AboutForkJoinPool {
      * volatile long ctl;                   控制量：活跃数，工作者总数，
      *  16：AC(number of active，活跃数量-目标并行) 16：TC(number of total，工作者总数-目标并行) 16：SS(版本计数和顶部等待线程的状态) 16:ID(WorkQueue数组索引最大值，即栈顶)
      *  AC为负，那么没有足够的活跃工作者，TC为负，那么没有足够的总共的工作者，SP -> SS ID
+     *  SP => scanSate stackPred
      *
      * volatile int runState;               状态
      * 1：SHUTDOWN 1：TERMINATED 1：STOP （26：customized） 1：STARTED 1：RSIGNAL 1：RSLOCK
@@ -499,39 +500,76 @@ public class AboutForkJoinPool {
      * final int helpComplete(WorkQueue w, CountedCompleter<?> task, int maxTasks) 尝试窃取和运行任务，使用"顶层"算法的变体，将任务
      * 限制为祖先任务：该算法倾向于提取和运行从工作者自己的队列中的任务(通过popCC)。否则就扫描其他工作者的队列，随机地移动到竞争或者执行，基于
      * 校验和决定放弃。参数maxTasks支持外部使用；内部的使用则为0。
+     * 返回任务的退出状态，要么为0，要么为负数
+     * 如果WorkQueue数组不为空，且数组长度大于0，且task不为空，且w（工作者）不为空，那么首先生成一个随机数（用于数组索引）
+     * 然后不断循环，期间：
+     *  如果task的status小于0，那么直接跳出
+     *  如果通过w.popCC返回的任务（CountedCompleter）不为空，那么调用其doExec执行任务，之后如果任务全部完成，那么（maxTasks为1），那么跳出
+     *  然后重置校验和
+     *  如果通过w.popCC返回的任务为空：
+     *      如果k位置的WorkQueue为空，那么k+1然后继续循环
+     *      如果k位置的WorkQueue不为空，那么调用其pollAndExecCC方法从队列中取出并执行任务，如果执行的任务返回状态小于0，那么校验和加上那个状态值
+     *      如果刚才的执行的任务的状态大于0，再判断任务是否全部完成，如果是那么跳出，否则将k置为另一个随机数，重置校验和，循环继续
+     *      当k值达到WorkQueue数组的最后的索引后，跳出循环
      *
      *
-     * private void helpStealer(WorkQueue w, ForkJoinTask<?> task) 尝试为窃取者分配和执行给定任务，
+     * private void helpStealer(WorkQueue w, ForkJoinTask<?> task) 尝试为窃取者分配和执行给定任务，或者进而其中的窃取者之一
+     * 追踪currentSteal到currentJoin的链接会寻找一个工作在给定的任务的后代的线程，并且其具有非空的队列来窃取和执行任务。
+     * 在等待合并时第一次调用该方法常常会涉及到扫描/搜索（这是可接受的，因为合并者没有什么更好的事情可以做），但该方法会在工作中留下暗示（hint）来加速
+     * 后面的调用
+     * w：工作者 task：要合并的任务
+     * 如果各种检查项都通过（同上一方法），那么不断循环，期间：
      *
-     * private boolean tryCompensate(WorkQueue w) 尝试减少活跃数量（有时是隐式的）并且可能地释放或者创建一个补偿地工作者以备阻塞的时候使用。
-     * 在竞争，无法窃取，不稳定或者终结的时候返回false。
+     *
+     * private boolean tryCompensate(WorkQueue w) 尝试减少活跃数量（有时是隐式的）并且可能地释放或者创建一个补偿的工作者以备阻塞的时候使用。
+     * 在竞争，无法窃取，不稳定或者终结的时候返回false
+     *
+     *
      *
      * final int awaitJoin(WorkQueue w, ForkJoinTask<?> task, long deadline) 帮助或者阻塞直到给定的任务完成或者超时
      * 返回值为任务的状态
      *
-     * private WorkQueue findNonEmptyStealQueue() 返回一个非空的窃取队列，
+     * private WorkQueue findNonEmptyStealQueue() 如果在scan的过程发现非空的窃取队列，那么返回它，否则返回空。该方法必须在调用者
+     * 使用队列并且队列为空的时候重试
      *
-     * final void helpQuiescePool(WorkQueue w)
+     * final void helpQuiescePool(WorkQueue w) 运行任务直到isQuiescent，在此期间有ctl的维护，但是在任务不能被发现的时候阻塞，我们重新扫描
+     * 直到其他的工作者也不能发现任务
      *
-     * final ForkJoinTask<?> nextTaskFor(WorkQueue w)
+     * final ForkJoinTask<?> nextTaskFor(WorkQueue w) 为给定的工作者获取或者移除一个本地的或者窃取的任务
      *
      * static int getSurplusQueuedTaskCount()
      *
-     * private boolean tryTerminate(boolean now, boolean enable)
+     * private boolean tryTerminate(boolean now, boolean enable) 可能初始化并且（或者）完成终结
+     * now为true，则无条件的终结，否则只有是没有任务和活跃工作者
+     * enable为true，当下次可能的时候可以终结
+     * 如果正在终结或者已经终结，返回true
      *
-     * private void externalSubmit(ForkJoinTask<?> task)
+     * //外部任务提交
      *
-     * final void externalPush(ForkJoinTask<?> task)
+     * private void externalSubmit(ForkJoinTask<?> task) externalPush的完整版本，处理不平常的情况，在第一次提交任务到线程池的时候进行二次的
+     * 初始化。该方法也检测外部线程的第一次提交，如果索引位置处的队列为空的话创建一个新的共享的队列
      *
-     * static WorkQueue commonSubmitterQueue()
+     * final void externalPush(ForkJoinTask<?> task) 尝试在提交者的当前队列添加给定的任务到一个队列。当需要externalSubmit的时候，只有最公共的路径
+     * 会被该方法直接处理
      *
-     * final boolean tryExternalUnpush(ForkJoinTask<?> task)
+     * static WorkQueue commonSubmitterQueue() 对于外部线程返回common pool的队列
      *
-     * final int externalHelpComplete(CountedCompleter<?> task, int maxTasks)
+     * final boolean tryExternalUnpush(ForkJoinTask<?> task) 对于外部提交者执行tryUnpush：找到队列，在明显不为空的情况下加锁，在加锁的情况下验证，
+     * 并且调整顶部。每项检查都可能会失败但是很少发生。
      *
-     * public <T> T invoke(ForkJoinTask<T> task)
+     * final int externalHelpComplete(CountedCompleter<?> task, int maxTasks) 对于外部提交者执行helpComplete
      *
-     * public void execute(ForkJoinTask<?> task)
+     * private ForkJoinPool(int parallelism, ForkJoinWorkerThreadFactory factory,
+     *  UncaughtExceptionHandler handler, int mode, String workerNamePrefix) 构造函数
+     *
+     * public static ForkJoinPool commonPool() common pool的构造方法
+     *
+     * //Executor的实现方法
+     *
+     * public <T> T invoke(ForkJoinTask<T> task) 执行给定的方法，在完成后返回结果。如果计算遇到了一个未检查异常或者错误，该方法将重新抛出异常。重新抛出
+     * 的异常和一般异常表现相同，但是，当可能的时候，会包含当前线程和实际抛出异常的线程的stack trace
+     *
+     * public void execute(ForkJoinTask<?> task) 安排给定任务的异步执行
      *
      * public void execute(Runnable task)
      *
@@ -545,11 +583,11 @@ public class AboutForkJoinPool {
      *
      * public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
      *
-     * public int getParallelism()
+     * public int getParallelism() 返回目标并行等级，config的低16位
      *
-     * public int getPoolSize()
+     * public int getPoolSize() 返回已经启动但还没有被终结的工作者线程的数量。
      *
-     * public boolean getAsyncMode()
+     * public boolean getAsyncMode() 如果线程池对于分支还未合并的任务使用本地FIFO调度模型，那么返回true
      *
      * public int getRunningThreadCount()
      *
@@ -568,6 +606,8 @@ public class AboutForkJoinPool {
      * protected ForkJoinTask<?> pollSubmission()
      *
      * protected int drainTasksTo(Collection<? super ForkJoinTask<?>> c)
+     *
+     * //终止线程池
      *
      * public void shutdown()
      *

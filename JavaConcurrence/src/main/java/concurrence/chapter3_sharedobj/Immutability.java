@@ -9,7 +9,7 @@ import java.util.Set;
 public class Immutability {
     /*
      * 使用关键字final
-     * final域可以保证初始化过程的安全性
+     * final域可以保证初始化过程的安全性(因为在初始化的时候仅仅只有一个线程能够初始化该类)
      * 从而可以不必同步这些对象
      */
     private final Set<String> set = new HashSet<>();

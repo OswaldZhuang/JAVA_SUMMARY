@@ -26,5 +26,15 @@ public class AboutGC {
      * 该方法并不建议使用
      */
 
+    /**
+     * minor gc
+     *  即新生代的gc
+     * full gc
+     *  == major gc
+     *  整个堆的gc，在老年代空间不足的情况下会触发
+     *  Runtime.getRuntime.gc()会显式的触发full gc
+     * 在执行full gc之前是不会执行minor gc的，但是可以通过设置参数来指定-XX: +ScavengeBeforeFullGC
+     */
+
 
 }

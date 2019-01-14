@@ -4,7 +4,7 @@ public class UseVolatile {
     /*
      * 使用volatile能够保证可见性,因为对于volatile变量的更改会立刻
      * 反映到内存中,使得其他线程立刻“看到”
-     * volatile会禁止指令重排
+     * volatile会禁止指令重排，具体的做法是插入内存屏障
      */
     
     private volatile int count;

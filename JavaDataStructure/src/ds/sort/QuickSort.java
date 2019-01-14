@@ -1,7 +1,5 @@
 package ds.sort;
 
-import java.util.Arrays;
-
 /*
  * 快速排序
  */
@@ -37,13 +35,14 @@ public class QuickSort {
 		base = arr[left];
 		
 		while(i != j) {
-			
+			//j位置的数比base位置的数小
 			while(arr[j] >= base ) {
 				if(i == j) {
 					break;
 				}
 				j--;
 			}
+			//i位置的数比base位置的数大
 			while(arr[i] <= base ) {
 				if(i == j) {
 					break;

@@ -5,12 +5,15 @@ package ds.tree.binary_tree_series;
  * 0.红黑树是二叉搜索树
  * 1.根节点是黑色
  * 2.如果一个节点是红色,那么它的子节点必须是黑色
- * 3.一个节点到该节点的叶子节点的所有路径黑色节点数目相同
+ * 3.一个节点到该节点的所有叶子节点的所有路径黑色节点数目相同
  * 4.叶子节点为黑色(叶子节点也即NIL节点,也叫做"哨兵")
  * 
  * 因此红黑树的重要特性之一就是:从根节点到叶子节点的最长路径不会比从根节点到叶子节点的最短路径大两倍
  * (首先,最长的路径是红-黑-红-黑...,而最短路径是黑-黑-...,而由于条件3的限制,最长路径与最短路径
  * 有相同的黑色节点,而在最长路径上红色节点又不可能比黑色节点多[根和叶都是黑色的],因此上述结论 成立)
+ *
+ * 和AVL树相比，红黑树在插入的时候有更少的旋转操作，在插入操作频繁的case中，红黑树更加适用，而如果搜索操作更频繁，
+ * 那么AVL树将更使用
  */
 public class RBTree { 
     
@@ -47,15 +50,14 @@ public class RBTree {
 	 * 的位置,r的左子树r_l会成为k'的右子树
 	 *                                     k                                r
 	 *                                   /   \                            /   \
-	 *                                k_l     r         ====>   k'    r_r
-	 *                                       /  \                      /  \
-	 *                                    r_l    r_r                k_l   r_l 
+	 *                                k_l     r         ====>            k'    r_r
+	 *                                       /  \                       /  \
+	 *                                    r_l    r_r                  k_l   r_l
 	 */
 	private void leftRotate(RBNode node) {
 		//这里node即为上述的k
 		RBNode k_parent = node.parent;
 		RBNode r = node.right;
-		RBNode l = node.left;
 		if(k_parent.left == node) {
 			k_parent.left = r;
 		}else {
@@ -71,9 +73,9 @@ public class RBTree {
 	 * l的右子树l_r会成为k'的左子树
 	 *                          k                                l
 	 *                        /   \                            /  \
-	 *                       l      r        ====>   l_l      k'  
-	 *                     /  \                                     /  \
-	 *                   l_l   l_r                                l_r    r
+	 *                       l      r        ====>           l_l    k'
+	 *                     /  \                                    /  \
+	 *                   l_l   l_r                                l_r  r
 	 */
 	private void rightRotate(RBNode node) {
 		//这里node即为上述的k
@@ -121,7 +123,11 @@ public class RBTree {
 		//由于插入之后会破坏红黑树,因此需要一定的修正
 		fixRBTree(node);
 	}
-	
+
+	//修正的主要操作为变色和旋转
+    //叔节点为红色，那么需要变色
+    //叔节点为黑色，那么需要旋转。插入的节点为父节点的左孩子，那么需要进行变色+右旋转一次；
+    // 插入的节点为父节点的右孩子，那么需要左旋转一次+变色+右旋转一次
 	private void fixRBTree(RBNode node) {
 		/*
 		 * 如果刚开始没有节点,那么插入的节点为根节点,根据定义
@@ -158,14 +164,16 @@ public class RBTree {
 			 * 
 			 *            b                                       r
 			 *          /   \                                    /  \
-			 *        r       r        ====>            b     b
-			 *       /                                        /
-			 *     r                                         r
+			 *        r       r        ====>                    b     b
+			 *       /                                         /
+			 *     r                                          r
 			 */
 			if(uncle.color == true) {
 				pare.color = false;
 				grad.color = true;
 				uncle.color = false;
+				//此时并没有结束，因为祖父节点变为了红色，如果其父节点为红色，那么需要进一步修正
+				fixRBTree(grad.parent);
 			}
 			/*
 			 * 情况2:叔节点为黑色,且插入节点为父节点的右子节点
@@ -198,9 +206,9 @@ public class RBTree {
 			 *  这时候父节点变为黑色,祖父节点变为红色,祖父节点为支点,右旋
 			 *                    k(r)                                k_r(b)
 			 *                   /   \                                  /  \
-			 *              k_r(b)  k_l(b)      ===>    n(r)     k(r)      
-			 *              /                                                    \
-			 *           n(r)                                                    k_l(b)                                   
+			 *              k_r(b)  k_l(b)      ===>                 n(r)   k(r)
+			 *              /                                                 \
+			 *           n(r)                                                  k_l(b)
 			 */
 			else if(uncle.color == false && node == pare.left) {
 				pare.color = false;
