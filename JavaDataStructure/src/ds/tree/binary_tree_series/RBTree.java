@@ -219,6 +219,33 @@ public class RBTree {
 		}
 		
 	}
+
+
+	//删除节点
+    //详见https://www.geeksforgeeks.org/red-black-tree-set-3-delete-2/
+	public void deleteNode(int i_key){
+        /**
+         * 假设需要删除的节点为v
+         * 而u的子节点且是替换v的节点为u
+         * v的兄弟节点为s，v和s的父节点为p
+         */
+
+        /**
+         * 分情况讨论：
+         * I.如果u和v其中有一个为红色，那么直接删除并替换，然后颜色变为黑色
+         * II.如果u和v都为黑色（比如v是叶子节点），那么将v删除并用u替换后，把u标记为double-black
+         *      a.s是黑色，并且至少s的一个子节点为红色
+         *          a.1 LL
+         *          a.2 LR
+         *          a.3 RR s是右子节点，s的右子节点为红色或者两个子节点都为红色，那么左旋p
+         *          a.4 RL s是右子节点，s的左子节点为红色，那么先右旋s，然后左旋p
+         *      b.s是黑色，并且其所有子节点都为黑色，那么s变为红色，p变为double-black的状态
+         *      c.s是红色
+         *          c.1 LL
+         *          c.2 RR s是右子节点，那么左旋p，然后变成情况b
+         */
+
+	}
 	
 	
 }

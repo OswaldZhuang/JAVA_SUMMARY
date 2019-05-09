@@ -1,0 +1,18 @@
+
+poll:等待fd上的事件
+
+poll的功能和select基本一致，不同在于poll没有fd的大小限制
+
+include/linux/poll.h
+
+int poll(struct pollfd *fds, nfds_t nfds, int timeout)
+
+int ppoll(struct pollfd *fds, nfds_t nfds, const struct timespec *tmo_p, const sigset_t *sigmask)
+
+struct pollfd{
+    int fd; //文件描述符
+    short events; //指定感兴趣的事件
+    short revents; //输出参数，由内核填充，表示实际发生的事件
+};
+
+函数返回有事件（或者exception）的fd的数量

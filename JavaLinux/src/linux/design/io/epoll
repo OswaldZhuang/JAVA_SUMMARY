@@ -1,0 +1,39 @@
+
+epoll：I/O事件通知机制
+epoll和poll的功能类似，即监控fd，等待其是否就绪
+
+include/linux/eventpoll.h
+glibc/sysdeps/unix/sysv/linux/sys/epoll.h
+
+epoll可以使用edge-triggered 或者 level-triggered并且对于大量的fd扩展良好
+
+epoll API的核心概念在于epoll instance（epoll实例），
+epoll instance是一种内核数据结构，从用户空间角度讲，可以被考虑作为两种list的容器:
+1.interest list:进程感兴趣的所有fd
+2.ready list:io准备就绪的所有fd
+
+以下系统调用会创建并管理epoll实例：
+epoll_create:创建epoll instance
+epoll_ctl:注册感兴趣的fd
+epoll_wait:等待io事件
+
+
+edge-triggered(ET)
+考虑如下场景：
+1.一个在pipe读取端的fd(rfd)在epoll instance上注册
+2.一个writer在pipe一端写入2kb数据
+3.epoll_wait调用完成（会返回rfd）
+4.一个reader从rfd读取了1kb的数据
+5.调用epoll_wait
+writer ----pipe---- rfd<--reader    (epoll_instance)
+如果采用ET，那么以上场景可能会导致第5步永久等待。
+在ET中，只有当fd有改变的时候，才会传播事件
+第二步中数据增加，那么fd改变，会产生事件被epoll消费
+而第四步的数据没有变化，即不会有事件产生（也就是说如果rfd数据增加，那么epoll_wait就会返回）
+因此在使用ET的时候，需要：
+1.非阻塞的fd
+2.只有当read和write返回EAGAIN的之后才等待事件
+
+level-triggered(LT)
+LT为默认选项，此时epoll是更快的poll
+

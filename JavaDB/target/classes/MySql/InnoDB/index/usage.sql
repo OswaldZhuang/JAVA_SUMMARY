@@ -10,11 +10,3 @@ CREATE INDEX <index_name> ON `<table_name>`(`column_name1`,`column_name2`,`colum
 --和(`column_name1`)三个索引
 
 --EXPLAIN <sql_statement> 以查看sql的执行计划
-
-
---索引可使用场景：
-    --<, <=, >, >=, ==, between, in, 不以通配符开始的like
-
-
---索引失效场景：
---like %xx， not in，not exist，!=，is null

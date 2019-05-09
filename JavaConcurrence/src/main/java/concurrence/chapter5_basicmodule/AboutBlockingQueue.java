@@ -1,6 +1,5 @@
 package concurrence.chapter5_basicmodule;
 
-import java.util.Collection;
 
 public class AboutBlockingQueue {
 	/*

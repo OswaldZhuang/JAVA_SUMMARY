@@ -5,6 +5,13 @@ package db;
  */
 public class Isolation {
     /**
+     * 数据库事务的特性ACID
+     * A（atomicity） 原子性
+     * C（consistency） 一致性
+     * I（isolation）隔离性
+     * D（durability）持久性
+     */
+    /**
      * read uncommitted
      * 读未提交
      * 一个事务读取另一个事务还未提交的数据

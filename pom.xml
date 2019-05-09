@@ -13,15 +13,12 @@
     <module>JavaDistribution</module>
     <module>JavaDB</module>
     <module>JavaDesignPattern</module>
-    <module>JavaException</module>
     <module>JavaIO</module>
-    <module>JavaJMS</module>
+    <module>JavaMQ</module>
     <module>JavaLinux</module>
-    <module>JavaMybatis</module>
     <module>JavaNet</module>
     <module>JavaSecurity</module>
     <module>JavaSpring</module>
-    <module>JavaTool</module>
     <module>JavaTX</module>
     <module>JavaVM</module>
       <module>JavaWeb</module>

@@ -28,7 +28,7 @@ public class BalanceBinaryTree {
     
     /*
      * AVL添加节点的时候,为了保持平衡,要进行左旋或者右旋
-     * val为需要插入的值,t为查找的起始节点
+     * val为需要插入的值,t为查找的起始节点（更通俗的说是不平衡的那个点）
      * 返回插入的子节点(子树)
      *  插入过后需要检查插入的节点是否破坏了平衡性
      *  平衡性的判断依据为检查该节点的左子树和右子树的高度差
@@ -67,11 +67,11 @@ public class BalanceBinaryTree {
 
         //插入到左子树中，并且不平衡
         if (balance(t) > 1) {
-            if (val < t.val) return rightRotate(t); //LL 类型
-            if (val > t.val) return leftRightRotate(t); //LR 类型
+            if (val < t.left.val) return rightRotate(t); //LL 类型
+            if (val > t.left.val) return leftRightRotate(t); //LR 类型
         } else if (balance(t) < -1) {//插入到右子树中，并且不平衡
-            if (val > t.val) return leftRotate(t); //RR 类型
-            if (val < t.val) return rightLeftRotate(t); //LR 类型
+            if (val > t.right.val) return leftRotate(t); //RR 类型
+            if (val < t.right.val) return rightLeftRotate(t); //LR 类型
         }
         return t;
 
@@ -133,7 +133,7 @@ public class BalanceBinaryTree {
 		node.left = leftRotate(node.left);
 		return rightRotate(node);
 	}
-	//左右旋
+	//右左旋
 	/*
 	 * 类似于上
 	 */

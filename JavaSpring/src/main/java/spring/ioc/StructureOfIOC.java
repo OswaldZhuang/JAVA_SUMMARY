@@ -23,6 +23,12 @@ public class StructureOfIOC {
     
     /*
      * ApplicationContext 体系
+     *
+     * Interface ApplicationContext
+     * 最基本的应用上下文定义
+     *
+     * Interface ConfigurableApplicationContext
+     *
      */
 
 }
