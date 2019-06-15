@@ -1,8 +1,9 @@
 /**
- * CAP理论
+ * CAP 和 BASE理论
  */
-public class CAPTheory {
+public class CAPandBASETheory {
     /**
+     * CAP：
      * C:一致性,Consistency
      * 在replicate模式下,数据在主从之间能够保持一致
      * A:可用性,Availability
@@ -12,5 +13,15 @@ public class CAPTheory {
      * 在分布式系统中,上述三个条件不可能同时成立,最多只有其中两个能同时成立
      *
      * 而分布式系统中P是必须成立的(当网络出现问题的时候整个服务必须可用),因此主要考虑C和A之间的平衡问题
+     */
+
+    /**
+     * BASE：
+     * basically availability：基本可用
+     *  响应时间的损失，系统功能的损失
+     * soft state：软状态
+     *  系统中允许存在中间状态
+     * eventually consistent：最终一致
+     *  数据的一致性不需要强一致
      */
 }

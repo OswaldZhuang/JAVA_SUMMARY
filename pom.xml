@@ -9,7 +9,7 @@
     <module>JavaBase</module>
     <module>JavaCollection</module>
     <module>JavaConcurrence</module>
-    <module>JavaDataStructure</module>
+    <module>JavaAlgorithm</module>
     <module>JavaDistribution</module>
     <module>JavaDB</module>
     <module>JavaDesignPattern</module>

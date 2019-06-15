@@ -20,7 +20,7 @@ public class DoubleWriteBetweenDBandCache {
      * 简单先删除缓存，再更新数据库仍然可能会存在脏数据的问题，比如：
      * 1.a更新了数据，变为k，v2，然后将k，v1从缓存删除
      * 2.b从缓存中请求k数据，发现不存在，于是从数据库中读取k，然后再跟新缓存，变为k，v1
-     * 3.a更新数据库，变为k，v1
+     * 3.a更新数据库，变为k，v2
      *
      * 于是需要"延时双删策略"，即：
      * 1.删除缓存
@@ -35,7 +35,7 @@ public class DoubleWriteBetweenDBandCache {
     /**
      * 3.先更新数据库，再删除缓存（Cache Aside Pattern）
      *
-     * 仍然，出现更新缓存失败的情况下，脏数据还是会存在
+     * 仍然出现更新缓存失败的情况下，脏数据还是会存在
      */
 
     /**

@@ -2,6 +2,10 @@ package security.oauth;
 
 public class AboutJWT {
 	//JSON WEB TOKEN
+
+    /**
+     * JWT是一种自编码的token
+     */
 	
 	/*
 	 * JWT由三部分组成:

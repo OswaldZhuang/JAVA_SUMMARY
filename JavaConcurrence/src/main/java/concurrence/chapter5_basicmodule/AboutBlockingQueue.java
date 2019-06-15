@@ -32,4 +32,32 @@ public class AboutBlockingQueue {
 	 * BlockingQueue没有关闭方法,一般的策略是生产者向队列中加入特殊的"end-of-stream"或
 	 * "有毒"对象,当消费者获取这些对象时会做出相关的反应
 	 */
+
+	/**
+	 * ArrayBlockingQueue
+     * 基于数组的有界的阻塞队列
+     * 通过ReentrantLock和Condition（非空，非满）控制元素的添加和删除
+	 */
+
+    /**
+     * LinkedBlockingQueue
+     */
+
+    /**
+     * SynchronousQueue
+     */
+
+    /**
+     * DelayQueue
+     */
+
+    /**
+     * PriorityBlockingQueue
+     */
+
+    /**
+     * Interface java.util.concurrent.TransferQueue
+     *
+     * LinkedTransferQueue
+     */
 }

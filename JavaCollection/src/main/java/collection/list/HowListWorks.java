@@ -43,7 +43,11 @@ public class HowListWorks {
      * public boolean removeAll(Collection<?> c) 去除ArrayList中c包含的元素
      * public boolean retainAll(Collection<?> c) 保留ArrayList中c包含的元素
      */
-	
-	
+
+	/**
+	 * java.util.LinkedList
+	 */
+
+
 
 }
